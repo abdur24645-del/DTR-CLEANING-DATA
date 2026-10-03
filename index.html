@@ -95,8 +95,8 @@ button.alt{background:var(--deep);color:#fff;box-shadow:none}
     <div class="prog"><div class="t"><i id="bar"></i></div><small id="cnt">0 of 3 done</small></div>
 
     <section class="step"><b class="n">1</b>
-      <h2><label for="dtr">DTR number</label></h2>
-      <input id="dtr" type="text" autocomplete="off" placeholder="e.g. 2026-00123" required>
+      <h2><label for="dtr">DTR number <span style="font-weight:600;color:var(--mute);font-size:.9rem">(4 digits)</span></label></h2>
+      <input id="dtr" type="text" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" autocomplete="off" placeholder="e.g. 1234" required>
     </section>
 
     <section class="step"><b class="n">2</b>
@@ -117,7 +117,7 @@ button.alt{background:var(--deep);color:#fff;box-shadow:none}
 
     <section class="step"><b class="n">5</b>
       <h2><label for="rem">Remarks</label></h2>
-      <textarea id="rem" placeholder="Anything we should know? (optional)"></textarea>
+      <textarea id="rem" placeholder="Any issue with DTR, protection, etc."></textarea>
     </section>
 
     <div class="bar">
@@ -222,10 +222,11 @@ document.querySelectorAll('input[type=file]').forEach(inp=>{
 
 /* ---------- Validation & send ---------- */
 function check(){
-  const n=[!!$("dtr").value.trim(),!!state.before,!!state.after].filter(Boolean).length;
+  const n=[/^\d{4}$/.test($("dtr").value),!!state.before,!!state.after].filter(Boolean).length;
   $("bar").style.width=(n/3*100)+"%"; $("cnt").textContent=n+" of 3 done";
-  $("send").disabled = !( $("dtr").value.trim() && state.before && state.after );
+  $("send").disabled = !( /^\d{4}$/.test($("dtr").value) && state.before && state.after );
 }
+$("dtr").addEventListener("input",()=>{ $("dtr").value=$("dtr").value.replace(/\D/g,"").slice(0,4); });
 ["dtr","rem"].forEach(i=>$(i).addEventListener("input",check));
 
 $("send").onclick = async ()=>{

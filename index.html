@@ -101,9 +101,8 @@ button.alt{background:var(--deep);color:#fff;box-shadow:none}
 <div class="wrap">
   <div class="inst" id="inst" role="region" aria-label="Install app">
     <div class="top"><img src="logo.png" alt=""><h2>&#9888; INSTALL THIS APP FIRST</h2></div>
-    <p>Install it on your phone's home screen and open it from there, not from the browser.</p>
-    <button id="instBtn" type="button">Install app now</button>
-    <p id="instStatus" style="font-size:1rem;margin:12px 0 0"></p>
+    <p id="instMsg">Install it on your phone's home screen and open it from there, not from the browser.</p>
+    <button id="installAppBtn" type="button">&#128242; Install App to Home Screen</button>
     <ol id="instSteps"></ol>
   </div>
   <div id="formWrap">
@@ -149,38 +148,36 @@ button.alt{background:var(--deep);color:#fff;box-shadow:none}
 </div>
 
 <script>
-/* ---------- Install as app ---------- */
-let deferredPrompt=null;
-addEventListener("beforeinstallprompt",e=>{ e.preventDefault(); deferredPrompt=e; setStatus("Ready. Tap the button to install.",true); });
-if("serviceWorker" in navigator){
-  navigator.serviceWorker.register("sw.js").catch(err=>setStatus("Service worker failed: "+err.message));
+/* ---------- Install as app (same method as the GESD page) ---------- */
+if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js'); }
+
+let deferredPrompt;
+const installBox = document.getElementById('inst');
+const installBtn = document.getElementById('installAppBtn');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  installBox.classList.add('show');
+});
+
+installBtn.addEventListener('click', async () => {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  if (outcome === 'accepted') installBox.classList.remove('show');
+  deferredPrompt = null;
+});
+
+window.addEventListener('appinstalled', () => installBox.classList.remove('show'));
+
+// iPhone Safari never fires the install event, so show the manual steps there
+if (/iphone|ipad|ipod/i.test(navigator.userAgent)) {
+  installBtn.style.display = 'none';
+  document.getElementById('instMsg').textContent = 'Install it on your home screen and open it from there.';
+  document.getElementById('instSteps').innerHTML = '<li>Tap <b>Share</b> in Safari.</li><li>Tap <b>Add to Home Screen</b>.</li><li>Tap <b>Add</b>.</li>';
+  installBox.classList.add('show');
 }
-(function(){
-  const box=document.getElementById("inst"), btn=document.getElementById("instBtn"), steps=document.getElementById("instSteps");
-  const ua=navigator.userAgent, ios=/iphone|ipad|ipod/i.test(ua), inapp=/FBAN|FBAV|Messenger|Instagram|Line\/|; wv\)/i.test(ua);
-  const li=t=>{const l=document.createElement("li");l.innerHTML=t;steps.appendChild(l)};
-  function manual(){
-    steps.innerHTML="";
-    if(inapp){ li("This page is open inside another app. Tap the <b>menu</b> and choose <b>Open in Chrome</b>, then install."); return; }
-    if(ios){ li("Tap <b>Share</b> in Safari."); li("Tap <b>Add to Home Screen</b>."); li("Tap <b>Add</b>."); return; }
-    li("Tap the <b>&#8942; menu</b> in Chrome."); li("Tap <b>Install app</b> or <b>Add to Home screen</b>.");
-  }
-  box.classList.add("show"); manual();
-  if(ios||inapp) btn.textContent="Show me how to install";
-  btn.onclick=async()=>{
-    if(deferredPrompt){ deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt=null; }
-    else { manual(); steps.scrollIntoView({behavior:"smooth",block:"center"}); }
-  };
-  // self-check: tells you exactly which file is missing
-  (async()=>{
-    try{
-      const m=await (await fetch("manifest.json",{cache:"no-store"})).json();
-      for(const i of (m.icons||[])){ const r=await fetch(i.src,{cache:"no-store"}); if(!r.ok) return setStatus("Missing file on GitHub: "+i.src); }
-      if(!deferredPrompt) setStatus("Files OK. Waiting for browser install offer… if none, use the steps below.");
-    }catch(e){ setStatus("Missing or invalid file: manifest.json"); }
-  })();
-})();
-function setStatus(t,ok){ const e=document.getElementById("instStatus"); if(e){ e.textContent=t; e.style.fontWeight=800; e.style.color=ok?"#0b5a2c":"#8a0000"; } }
 </script>
 <script>
 /* ====== SET THIS after deploying the Apps Script (see setup steps) ====== */

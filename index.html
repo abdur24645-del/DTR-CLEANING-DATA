@@ -3,39 +3,62 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0a3f3b">
 <title>Cleaning report</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f3f6f5;--card:#fff;--ink:#14302b;--mute:#5d7570;--line:#cfdbd8;--brand:#0f6b5c;--brand-ink:#fff;--bad:#b3261e;--ok:#1b7a3d}
-@media (prefers-color-scheme:dark){:root{--bg:#0e1b19;--card:#16282500;--card:#162825;--ink:#e6f1ee;--mute:#93aaa5;--line:#2b423e;--brand:#3fb59f;--brand-ink:#05211c;--bad:#ff8a80;--ok:#6fdc97}}
+:root{--deep:#0a3f3b;--aqua:#22d3b0;--sun:#ffc933;--bg:#eef5f3;--card:#fff;--ink:#12302c;--mute:#5f7a75;--line:#d5e3e0;--bad:#c62828;--ok:#1b8a4b;--sh:0 8px 24px rgba(10,63,59,.10)}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-main{max-width:520px;margin:0 auto;padding:20px 16px 48px}
-h1{font-size:1.5rem;margin:8px 0 4px}
-.sub{color:var(--mute);margin:0 0 20px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px}
-label,.lbl{display:block;font-weight:600;margin-bottom:6px}
-input[type=text],textarea{width:100%;font:inherit;color:inherit;background:transparent;border:1px solid var(--line);border-radius:8px;padding:12px}
-textarea{min-height:96px;resize:vertical}
-:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
-.loc{display:flex;gap:10px;align-items:flex-start}
-.dot{width:12px;height:12px;border-radius:50%;background:var(--bad);margin-top:7px;flex:none}
-.dot.on{background:var(--ok)}
-.small{color:var(--mute);font-size:.9rem}
-.pick{display:block;border:2px dashed var(--line);border-radius:10px;min-height:150px;text-align:center;cursor:pointer;overflow:hidden;position:relative}
-.pick span{display:block;padding:54px 12px;color:var(--mute)}
-.pick img{display:none;width:100%;max-height:340px;object-fit:cover}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding-bottom:110px}
+.hero{background:var(--deep);color:#fff;padding:34px 20px 74px;position:relative;overflow:hidden;
+ background-image:radial-gradient(circle at 88% 22%,rgba(34,211,176,.35) 0 38px,transparent 39px),radial-gradient(circle at 72% 70%,rgba(34,211,176,.18) 0 62px,transparent 63px),radial-gradient(circle at 96% 78%,rgba(255,201,51,.5) 0 14px,transparent 15px),radial-gradient(circle at 58% 18%,rgba(255,255,255,.12) 0 10px,transparent 11px)}
+.hero h1{margin:0;font-size:2rem;font-weight:800;letter-spacing:-.02em;line-height:1.1}
+.hero p{margin:8px 0 0;color:#b8dcd6;max-width:26ch}
+.wrap{max-width:520px;margin:-46px auto 0;padding:0 14px;position:relative}
+.prog{background:var(--card);border-radius:16px;box-shadow:var(--sh);padding:12px 16px;margin-bottom:14px}
+.prog div.t{height:8px;background:var(--line);border-radius:8px;overflow:hidden}
+.prog div.t i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--aqua),var(--sun));border-radius:8px;transition:width .35s}
+.prog small{display:block;margin-top:6px;color:var(--mute);font-weight:600}
+.step{background:var(--card);border-radius:16px;box-shadow:var(--sh);padding:18px 16px 18px 64px;margin-bottom:14px;position:relative}
+.step>b.n{position:absolute;left:16px;top:16px;width:34px;height:34px;border-radius:50%;background:var(--deep);color:var(--aqua);display:grid;place-items:center;font-weight:800}
+.step.b>b.n{background:#fff3cf;color:#8a5a00}.step.a>b.n{background:#d8f7ec;color:#0c6b3d}
+.step h2{font-size:1.05rem;margin:0 0 8px;font-weight:800;line-height:34px}
+input[type=text],textarea{width:100%;font:inherit;color:var(--ink);background:#f6faf9;border:2px solid var(--line);border-radius:12px;padding:13px 14px}
+input[type=text]{font-size:1.15rem;font-weight:600;letter-spacing:.02em}
+textarea{min-height:100px;resize:vertical}
+input:focus,textarea:focus{outline:none;border-color:var(--aqua);background:#fff;box-shadow:0 0 0 4px rgba(34,211,176,.2)}
+.loc{display:flex;gap:10px;align-items:center;background:#fdecec;border-radius:12px;padding:12px;font-weight:600;color:var(--bad)}
+.loc.on{background:#dff7ea;color:var(--ok)}
+.dot{width:12px;height:12px;border-radius:50%;background:currentColor;flex:none;box-shadow:0 0 0 0 currentColor}
+.loc.on .dot{animation:ping 1.8s infinite}
+@keyframes ping{70%{box-shadow:0 0 0 10px transparent}100%{box-shadow:0 0 0 0 transparent}}
+.small{font-size:.9rem;font-weight:600;word-break:break-all}
+.pick{display:block;border:2px dashed #9fc4bd;border-radius:14px;min-height:150px;text-align:center;cursor:pointer;overflow:hidden;position:relative;background:#f6faf9}
+.pick span{display:block;padding:46px 12px;color:var(--mute);font-weight:600}
+.pick span:before{content:"\1F5BC";display:block;font-size:2rem;margin-bottom:4px}
+.pick img{display:none;width:100%;max-height:320px;object-fit:cover}
+.pick.has{border-style:solid;border-color:var(--aqua)}
 .pick.has img{display:block}.pick.has span{display:none}
 .pick input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
-button{font:inherit;font-weight:700;border:0;border-radius:10px;padding:14px 18px;background:var(--brand);color:var(--brand-ink);width:100%;cursor:pointer}
-button:disabled{opacity:.45;cursor:not-allowed}
-button.alt{width:auto;background:transparent;color:var(--brand);border:1px solid var(--brand);padding:8px 14px;margin-top:8px}
-.err{color:var(--bad);font-weight:600;margin:10px 0 0}
-.gate{position:fixed;inset:0;background:var(--bg);z-index:9;display:none;padding:28px 20px;overflow:auto}
-.gate.show{display:block}
-.gate div{max-width:440px;margin:8vh auto 0}
-.done{text-align:center;display:none}
-.done h2{color:var(--ok)}
-@media (prefers-reduced-motion:no-preference){button{transition:opacity .15s}}
+.bar{position:fixed;left:0;right:0;bottom:0;padding:12px 14px calc(12px + env(safe-area-inset-bottom,0px));background:rgba(238,245,243,.92);backdrop-filter:blur(8px);border-top:1px solid var(--line);z-index:5}
+.bar>*{max-width:492px;margin:0 auto}
+button{font:inherit;font-weight:800;border:0;border-radius:14px;padding:16px 18px;background:var(--sun);color:#3a2a00;width:100%;cursor:pointer;box-shadow:0 4px 0 #d9a514;font-size:1.05rem}
+button:active{transform:translateY(3px);box-shadow:0 1px 0 #d9a514}
+button:disabled{background:#cfdcd9;color:#7d9490;box-shadow:none;cursor:not-allowed}
+button.alt{background:var(--deep);color:#fff;box-shadow:none}
+.err{color:var(--bad);font-weight:700;margin:8px 0 0;text-align:center}
+.gate{position:fixed;inset:0;background:var(--deep);color:#fff;z-index:9;display:none;padding:28px 22px;overflow:auto}
+.gate.show{display:block}.gate div{max-width:440px;margin:8vh auto 0}
+.gate h1{font-size:1.8rem;margin:0 0 8px;font-weight:800}.gate li{margin:6px 0;color:#d3ece7}
+.gate .err{color:#ffb4a9;text-align:left}
+.done{display:none;text-align:center;background:var(--card);border-radius:16px;box-shadow:var(--sh);padding:36px 20px}
+.done h2{color:var(--ok);font-size:1.6rem;margin:0}
+.tick{width:72px;height:72px;border-radius:50%;background:#dff7ea;color:var(--ok);display:grid;place-items:center;font-size:2.2rem;margin:0 auto 12px}
+:focus-visible{outline:3px solid var(--aqua);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
@@ -43,62 +66,64 @@ button.alt{width:auto;background:transparent;color:var(--brand);border:1px solid
 <div class="gate" id="gate" role="alertdialog" aria-labelledby="gt">
   <div>
     <h1 id="gt">Turn on your location</h1>
-    <p>This report needs your GPS location. You can't continue until it's on.</p>
+    <p>This report needs your GPS. You can't continue until it's on.</p>
     <ol>
       <li>Turn on <b>Location / GPS</b> in your phone settings.</li>
-      <li>Allow location for this website when your browser asks.</li>
+      <li>Tap <b>Allow</b> when your browser asks.</li>
       <li>Tap the button below.</li>
     </ol>
     <p class="err" id="gateErr"></p>
-    <button id="retry" type="button">I turned it on — try again</button>
+    <button id="retry" type="button">I turned it on, try again</button>
   </div>
 </div>
 
-<main>
+<header class="hero">
+  <h1>Cleaning report</h1>
+  <p>Complete the steps, then send your DTR.</p>
+</header>
+
+<div class="wrap">
   <div id="formWrap">
-    <h1>Cleaning report</h1>
-    <p class="sub">Fill in all fields, then send.</p>
+    <div class="prog"><div class="t"><i id="bar"></i></div><small id="cnt">0 of 4 done</small></div>
 
-    <div class="card">
-      <label for="dtr">DTR number</label>
-      <input id="dtr" type="text" inputmode="text" autocomplete="off" placeholder="e.g. 2026-00123" required>
+    <section class="step"><b class="n">1</b>
+      <h2><label for="dtr">DTR number</label></h2>
+      <input id="dtr" type="text" autocomplete="off" placeholder="e.g. 2026-00123" required>
+    </section>
+
+    <section class="step"><b class="n">2</b>
+      <h2>Your location</h2>
+      <div class="loc" id="loc"><span class="dot"></span><span class="small" id="locTxt">Waiting for GPS…</span></div>
+    </section>
+
+    <section class="step b"><b class="n">3</b>
+      <h2>Before cleaning</h2>
+      <label class="pick" id="p1"><span>Tap to choose from gallery</span><img alt="Before cleaning preview"><input type="file" accept="image/*" data-k="before" aria-label="Photo before cleaning"></label>
+    </section>
+
+    <section class="step a"><b class="n">4</b>
+      <h2>After cleaning</h2>
+      <label class="pick" id="p2"><span>Tap to choose from gallery</span><img alt="After cleaning preview"><input type="file" accept="image/*" data-k="after" aria-label="Photo after cleaning"></label>
+    </section>
+
+    <section class="step"><b class="n">5</b>
+      <h2><label for="rem">Remarks</label></h2>
+      <textarea id="rem" placeholder="Anything we should know? (optional)"></textarea>
+    </section>
+
+    <div class="bar">
+      <button id="send" type="button" disabled>Send report</button>
+      <p class="err" id="err" role="alert"></p>
     </div>
-
-    <div class="card">
-      <div class="loc">
-        <span class="dot" id="dot"></span>
-        <div>
-          <div class="lbl" style="margin:0">Location</div>
-          <div class="small" id="locTxt">Waiting for GPS…</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="lbl">Photo before cleaning</div>
-      <label class="pick" id="p1"><span>Tap to choose from gallery</span><img alt="Before cleaning preview"><input type="file" accept="image/*" data-k="before"></label>
-    </div>
-
-    <div class="card">
-      <div class="lbl">Photo after cleaning</div>
-      <label class="pick" id="p2"><span>Tap to choose from gallery</span><img alt="After cleaning preview"><input type="file" accept="image/*" data-k="after"></label>
-    </div>
-
-    <div class="card">
-      <label for="rem">Remarks</label>
-      <textarea id="rem" placeholder="Anything we should know?"></textarea>
-    </div>
-
-    <button id="send" type="button" disabled>Send report</button>
-    <p class="err" id="err" role="alert"></p>
   </div>
 
-  <div class="card done" id="done">
+  <div class="done" id="done">
+    <div class="tick">&#10003;</div>
     <h2>Report sent</h2>
     <p>Thank you. Your DTR report was saved.</p>
-    <button type="button" onclick="location.reload()">Submit another report</button>
+    <button class="alt" type="button" onclick="location.reload()">Submit another report</button>
   </div>
-</main>
+</div>
 
 <script>
 /* ====== SET THIS after deploying the Apps Script (see setup steps) ====== */
@@ -114,11 +139,11 @@ function askGPS(){
   if(!navigator.geolocation){ gate(true,"This browser doesn't support location. Use Chrome or Safari."); return; }
   navigator.geolocation.getCurrentPosition(p=>{
     state.loc = {lat:p.coords.latitude, lng:p.coords.longitude, acc:Math.round(p.coords.accuracy), t:new Date(p.timestamp).toISOString()};
-    $("dot").classList.add("on");
+    $("loc").classList.add("on");
     $("locTxt").textContent = state.loc.lat.toFixed(5)+", "+state.loc.lng.toFixed(5)+" (±"+state.loc.acc+" m)";
     gate(false); check();
   }, e=>{
-    state.loc = null; $("dot").classList.remove("on"); $("locTxt").textContent = "Location is off";
+    state.loc = null; $("loc").classList.remove("on"); $("locTxt").textContent = "Location is off";
     gate(true, e.code===1 ? "Location access is blocked. Allow it in your browser's site settings and phone settings."
              : e.code===2 ? "Can't find your position. Turn on GPS and move to an open area."
              : "Location request timed out. Try again.");
@@ -160,6 +185,8 @@ document.querySelectorAll('input[type=file]').forEach(inp=>{
 
 /* ---------- Validation & send ---------- */
 function check(){
+  const n=[!!$("dtr").value.trim(),!!state.loc,!!state.before,!!state.after].filter(Boolean).length;
+  $("bar").style.width=(n/4*100)+"%"; $("cnt").textContent=n+" of 4 done";
   $("send").disabled = !( $("dtr").value.trim() && state.loc && state.before && state.after );
 }
 ["dtr","rem"].forEach(i=>$(i).addEventListener("input",check));

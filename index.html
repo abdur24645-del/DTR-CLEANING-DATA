@@ -234,7 +234,7 @@ $("send").onclick = async ()=>{
   const btn = $("send"); btn.disabled = true; btn.textContent = "Sending…";
   try{
     const r = await fetch(SCRIPT_URL, {method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"},
-      body: JSON.stringify({dtr:$("dtr").value.trim(), remarks:$("rem").value.trim(), loc:state.loc,
+      body: JSON.stringify({dtr:$("dtr").value.trim(), remarks:$("rem").value.trim(), loc:state.loc||{lat:"",lng:"",acc:""},
                             before:state.before, after:state.after})});
     const j = await r.json();
     if(!j.ok) throw new Error(j.error||"Server error");

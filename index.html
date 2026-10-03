@@ -61,6 +61,7 @@ input:focus,textarea:focus{outline:none;border-color:var(--aqua);background:#fff
 .bar{position:fixed;left:0;right:0;bottom:0;padding:12px 14px calc(12px + env(safe-area-inset-bottom,0px));background:rgba(238,245,243,.92);backdrop-filter:blur(8px);border-top:1px solid var(--line);z-index:5}
 .bar>*{max-width:492px;margin:0 auto}
 button{font:inherit;font-weight:800;border:0;border-radius:14px;padding:16px 18px;background:var(--sun);color:#3a2a00;width:100%;cursor:pointer;box-shadow:0 4px 0 #d9a514;font-size:1.05rem}
+#send{text-transform:uppercase;letter-spacing:.04em}
 button:active{transform:translateY(3px);box-shadow:0 1px 0 #d9a514}
 button:disabled{background:#cfdcd9;color:#7d9490;box-shadow:none;cursor:not-allowed}
 button.alt{background:var(--deep);color:#fff;box-shadow:none}
@@ -81,7 +82,7 @@ button.alt{background:var(--deep);color:#fff;box-shadow:none}
 <header class="hero">
   <img class="logo" src="logo.png" alt="Company logo">
   <h1>DTR Cleaning Report</h1>
-  <p>Complete the steps, then send your DTR.</p>
+  <p>Complete the steps, then submit.</p>
 </header>
 
 <div class="wrap">
@@ -121,7 +122,7 @@ button.alt{background:var(--deep);color:#fff;box-shadow:none}
     </section>
 
     <div class="bar">
-      <button id="send" type="button" disabled>Send report</button>
+      <button id="send" type="button" disabled>Submit report</button>
       <p class="err" id="err" role="alert"></p>
     </div>
   </div>
@@ -243,7 +244,7 @@ $("send").onclick = async ()=>{
     $("err").textContent = "Not sent: "+e.message+". Check your signal and try again.";
     btn.disabled = false;
   }
-  btn.textContent = "Send report";
+  btn.textContent = "Submit report";
 };
 </script>
 </body>

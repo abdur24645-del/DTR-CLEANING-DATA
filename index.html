@@ -50,12 +50,14 @@ input:focus,textarea:focus{outline:none;border-color:var(--aqua);background:#fff
 .pick.has img{display:block}.pick.has span{display:none}
 .pick input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
 .hero img.logo{width:52px;height:52px;border-radius:12px;background:#fff;object-fit:contain;padding:4px;margin-bottom:12px;display:block}
-.inst{display:none;align-items:center;gap:12px;background:var(--card);border-radius:16px;box-shadow:var(--sh);padding:12px;margin-bottom:14px;border:2px solid var(--aqua)}
-.inst.show{display:flex}
-.inst img{width:44px;height:44px;border-radius:10px;flex:none;object-fit:contain}
-.inst div{flex:1;font-weight:700;line-height:1.3}.inst small{display:block;color:var(--mute);font-weight:600}
-.inst button{width:auto;padding:10px 16px;font-size:.95rem;box-shadow:none}
-.inst .x{background:transparent;color:var(--mute);padding:8px;font-size:1.3rem;box-shadow:none}
+.inst{display:none;background:#ffc933;color:#2b1f00;border:4px solid #2b1f00;border-radius:18px;padding:16px;margin-bottom:14px;box-shadow:var(--sh)}
+.inst.show{display:block}
+.inst .top{display:flex;gap:12px;align-items:center}
+.inst .top img{width:60px;height:60px;border-radius:14px;flex:none;object-fit:contain;border:2px solid #2b1f00}
+.inst h2{margin:0;font-size:1.35rem;font-weight:800;line-height:1.15}
+.inst p{margin:8px 0 12px;font-weight:600}
+.inst button{background:#2b1f00;color:#ffc933;box-shadow:none;font-size:1.15rem;padding:16px}
+.inst ol{margin:12px 0 0;padding-left:20px;font-weight:700}
 .bar{position:fixed;left:0;right:0;bottom:0;padding:12px 14px calc(12px + env(safe-area-inset-bottom,0px));background:rgba(238,245,243,.92);backdrop-filter:blur(8px);border-top:1px solid var(--line);z-index:5}
 .bar>*{max-width:492px;margin:0 auto}
 button{font:inherit;font-weight:800;border:0;border-radius:14px;padding:16px 18px;background:var(--sun);color:#3a2a00;width:100%;cursor:pointer;box-shadow:0 4px 0 #d9a514;font-size:1.05rem}
@@ -98,10 +100,10 @@ button.alt{background:var(--deep);color:#fff;box-shadow:none}
 
 <div class="wrap">
   <div class="inst" id="inst" role="region" aria-label="Install app">
-    <img src="logo.png" alt="">
-    <div>Install this app<small id="instHint">Open it from your home screen</small></div>
-    <button id="instBtn" type="button">Install</button>
-    <button class="x" id="instX" type="button" aria-label="Dismiss">&times;</button>
+    <div class="top"><img src="logo.png" alt=""><h2>&#9888; Install this app on your phone</h2></div>
+    <p>Add it to your home screen so you can open it like a normal app.</p>
+    <button id="instBtn" type="button">Install app now</button>
+    <ol id="instSteps"></ol>
   </div>
   <div id="formWrap">
     <div class="prog"><div class="t"><i id="bar"></i></div><small id="cnt">0 of 4 done</small></div>
@@ -149,17 +151,26 @@ button.alt{background:var(--deep);color:#fff;box-shadow:none}
 /* ---------- Install as app ---------- */
 if("serviceWorker" in navigator){ addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{})); }
 (function(){
-  const box=document.getElementById("inst"), btn=document.getElementById("instBtn"), hint=document.getElementById("instHint");
+  const box=document.getElementById("inst"), btn=document.getElementById("instBtn"), steps=document.getElementById("instSteps");
   const standalone=matchMedia("(display-mode: standalone)").matches||navigator.standalone;
-  let dismissed=false; try{dismissed=sessionStorage.getItem("instX")==="1";}catch(e){}
-  if(standalone||dismissed) return;
+  if(standalone) return;
+  const ua=navigator.userAgent, ios=/iphone|ipad|ipod/i.test(ua), inapp=/FBAN|FBAV|Messenger|Instagram|Line\/|; wv\)/i.test(ua);
   let ev=null;
-  document.getElementById("instX").onclick=()=>{box.classList.remove("show");try{sessionStorage.setItem("instX","1")}catch(e){}};
-  addEventListener("beforeinstallprompt",e=>{e.preventDefault();ev=e;box.classList.add("show");});
-  btn.onclick=async()=>{ if(!ev) return; ev.prompt(); await ev.userChoice; ev=null; box.classList.remove("show"); };
+  const li=t=>{const l=document.createElement("li");l.innerHTML=t;steps.appendChild(l)};
+  function manual(){
+    steps.innerHTML="";
+    if(inapp){ li("This page is open inside another app. Tap <b>&#8942; / ... menu</b> and choose <b>Open in Chrome</b> (or Safari), then install."); return; }
+    if(ios){ li("Tap the <b>Share</b> button (square with arrow) in Safari."); li("Scroll and tap <b>Add to Home Screen</b>."); li("Tap <b>Add</b>."); return; }
+    li("Tap the <b>&#8942; menu</b> at the top-right of Chrome."); li("Tap <b>Install app</b> or <b>Add to Home screen</b>."); li("Tap <b>Install</b>.");
+  }
+  manual(); box.classList.add("show");
+  if(ios||inapp) btn.textContent="Show me how to install";
+  addEventListener("beforeinstallprompt",e=>{e.preventDefault();ev=e;steps.innerHTML="";});
+  btn.onclick=async()=>{
+    if(ev){ ev.prompt(); await ev.userChoice; ev=null; }
+    else { manual(); steps.scrollIntoView({behavior:"smooth",block:"center"}); }
+  };
   addEventListener("appinstalled",()=>box.classList.remove("show"));
-  const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);
-  if(ios){ hint.textContent="Tap Share, then Add to Home Screen"; btn.style.display="none"; box.classList.add("show"); }
 })();
 </script>
 <script>

@@ -1,6 +1,6 @@
 {
-  "name": "Cleaning Report",
-  "short_name": "Cleaning",
+  "name": "DTR CLEANING",
+  "short_name": "DTR CLEANING",
   "description": "Submit DTR cleaning reports with photos and location",
   "start_url": "./index.html",
   "scope": "./",

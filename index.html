@@ -36,7 +36,7 @@ input[type=text],textarea{width:100%;font:inherit;color:var(--ink);background:#f
 input[type=text]{font-size:1.15rem;font-weight:600;letter-spacing:.02em}
 textarea{min-height:100px;resize:vertical}
 input:focus,textarea:focus{outline:none;border-color:var(--aqua);background:#fff;box-shadow:0 0 0 4px rgba(34,211,176,.2)}
-.loc{display:flex;gap:10px;align-items:center;background:#fdecec;border-radius:12px;padding:12px;font-weight:600;color:var(--bad)}
+.loc{display:flex;gap:10px;align-items:center;background:#eef2f1;border-radius:12px;padding:12px;font-weight:600;color:var(--mute)}
 .loc.on{background:#dff7ea;color:var(--ok)}
 .dot{width:12px;height:12px;border-radius:50%;background:currentColor;flex:none;box-shadow:0 0 0 0 currentColor}
 .loc.on .dot{animation:ping 1.8s infinite}
@@ -78,20 +78,6 @@ button.alt{background:var(--deep);color:#fff;box-shadow:none}
 </head>
 <body>
 
-<div class="gate" id="gate" role="alertdialog" aria-labelledby="gt">
-  <div>
-    <h1 id="gt">Turn on your location</h1>
-    <p>This report needs your GPS. You can't continue until it's on.</p>
-    <ol>
-      <li>Turn on <b>Location / GPS</b> in your phone settings.</li>
-      <li>Tap <b>Allow</b> when your browser asks.</li>
-      <li>Tap the button below.</li>
-    </ol>
-    <p class="err" id="gateErr"></p>
-    <button id="retry" type="button">I turned it on, try again</button>
-  </div>
-</div>
-
 <header class="hero">
   <img class="logo" src="logo.png" alt="Company logo">
   <h1>Cleaning report</h1>
@@ -106,7 +92,7 @@ button.alt{background:var(--deep);color:#fff;box-shadow:none}
     <ol id="instSteps"></ol>
   </div>
   <div id="formWrap">
-    <div class="prog"><div class="t"><i id="bar"></i></div><small id="cnt">0 of 4 done</small></div>
+    <div class="prog"><div class="t"><i id="bar"></i></div><small id="cnt">0 of 3 done</small></div>
 
     <section class="step"><b class="n">1</b>
       <h2><label for="dtr">DTR number</label></h2>
@@ -114,8 +100,9 @@ button.alt{background:var(--deep);color:#fff;box-shadow:none}
     </section>
 
     <section class="step"><b class="n">2</b>
-      <h2>Your location</h2>
-      <div class="loc" id="loc"><span class="dot"></span><span class="small" id="locTxt">Waiting for GPS…</span></div>
+      <h2>Location <span style="font-weight:600;color:var(--mute);font-size:.9rem">(optional)</span></h2>
+      <button id="gpsBtn" type="button" class="alt" style="margin-bottom:10px">&#128205; Get location</button>
+      <div class="loc" id="loc"><span class="dot"></span><span class="small" id="locTxt">Not captured yet</span></div>
     </section>
 
     <section class="step b"><b class="n">3</b>
@@ -181,33 +168,29 @@ if (/iphone|ipad|ipod/i.test(navigator.userAgent)) {
 </script>
 <script>
 /* ====== SET THIS after deploying the Apps Script (see setup steps) ====== */
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbylKxOf2kxyhqDDA0IQ3ySU3HhG8TFsoCUkFrRrZ3xp5Syubj0ow2rKKedatA54iqFz/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxqLfAVB8cwWaaKt4f3FT1harU7ps4raB3FdsRxgOM/dev";
 /* ======================================================================= */
 
 const $ = id => document.getElementById(id);
 const state = {loc:null, before:null, after:null};
 
-/* ---------- Forced GPS ---------- */
-function gate(show, msg){ $("gate").classList.toggle("show", show); $("gateErr").textContent = msg||""; }
-function askGPS(){
-  if(!navigator.geolocation){ gate(true,"This browser doesn't support location. Use Chrome or Safari."); return; }
+/* ---------- Optional location ---------- */
+$("gpsBtn").onclick = ()=>{
+  const b=$("gpsBtn");
+  if(!navigator.geolocation){ $("locTxt").textContent="This browser doesn't support location."; return; }
+  b.disabled=true; b.textContent="Locating…";
   navigator.geolocation.getCurrentPosition(p=>{
     state.loc = {lat:p.coords.latitude, lng:p.coords.longitude, acc:Math.round(p.coords.accuracy), t:new Date(p.timestamp).toISOString()};
     $("loc").classList.add("on");
     $("locTxt").textContent = state.loc.lat.toFixed(5)+", "+state.loc.lng.toFixed(5)+" (±"+state.loc.acc+" m)";
-    gate(false); check();
+    b.disabled=false; b.innerHTML="&#128260; Update location";
   }, e=>{
-    state.loc = null; $("loc").classList.remove("on"); $("locTxt").textContent = "Location is off";
-    gate(true, e.code===1 ? "Location access is blocked. Allow it in your browser's site settings and phone settings."
-             : e.code===2 ? "Can't find your position. Turn on GPS and move to an open area."
-             : "Location request timed out. Try again.");
-    check();
+    state.loc = null; $("loc").classList.remove("on");
+    $("locTxt").textContent = e.code===1 ? "Location blocked. Allow it in browser settings, then try again."
+                            : e.code===2 ? "Can't find position. Turn on GPS and try again." : "Timed out. Try again.";
+    b.disabled=false; b.innerHTML="&#128205; Get location";
   }, {enableHighAccuracy:true, timeout:20000, maximumAge:0});
-}
-$("retry").onclick = askGPS;
-askGPS();
-if(navigator.permissions){ navigator.permissions.query({name:"geolocation"}).then(r=>{ r.onchange=askGPS; }).catch(()=>{}); }
-setInterval(()=>{ if(!$("done").style.display||$("done").style.display==="none") askGPS(); }, 60000); // re-verify GPS stays on
+};
 
 /* ---------- Photos (resized before upload) ---------- */
 function shrink(file, max=1600, q=0.8){
@@ -239,9 +222,9 @@ document.querySelectorAll('input[type=file]').forEach(inp=>{
 
 /* ---------- Validation & send ---------- */
 function check(){
-  const n=[!!$("dtr").value.trim(),!!state.loc,!!state.before,!!state.after].filter(Boolean).length;
-  $("bar").style.width=(n/4*100)+"%"; $("cnt").textContent=n+" of 4 done";
-  $("send").disabled = !( $("dtr").value.trim() && state.loc && state.before && state.after );
+  const n=[!!$("dtr").value.trim(),!!state.before,!!state.after].filter(Boolean).length;
+  $("bar").style.width=(n/3*100)+"%"; $("cnt").textContent=n+" of 3 done";
+  $("send").disabled = !( $("dtr").value.trim() && state.before && state.after );
 }
 ["dtr","rem"].forEach(i=>$(i).addEventListener("input",check));
 

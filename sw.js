@@ -1,4 +1,4 @@
-const CACHE = "cleaning-v3";
+const CACHE = "cleaning-v4";
 const SHELL = ["./", "./index.html", "./manifest.json", "./logo.png"];
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => Promise.all(SHELL.map(u=>c.add(u).catch(()=>{})))).then(() => self.skipWaiting()));

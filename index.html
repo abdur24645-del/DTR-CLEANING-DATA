@@ -32,8 +32,8 @@ body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "Plus Jakarta 
 .step>b.n{position:absolute;left:16px;top:16px;width:34px;height:34px;border-radius:50%;background:var(--deep);color:var(--aqua);display:grid;place-items:center;font-weight:800}
 .step.b>b.n{background:#fff3cf;color:#8a5a00}.step.a>b.n{background:#d8f7ec;color:#0c6b3d}
 .step h2{font-size:1.05rem;margin:0 0 8px;font-weight:800;line-height:34px}
-input[type=text],textarea{width:100%;font:inherit;color:var(--ink);background:#f6faf9;border:2px solid var(--line);border-radius:12px;padding:13px 14px}
-input[type=text]{font-size:1.15rem;font-weight:600;letter-spacing:.02em}
+input[type=text],input[type=tel],textarea{width:100%;font:inherit;color:var(--ink);background:#f6faf9;border:2px solid var(--line);border-radius:12px;padding:13px 14px}
+input[type=text],input[type=tel]{font-size:1.15rem;font-weight:600;letter-spacing:.02em}
 textarea{min-height:100px;resize:vertical}
 input:focus,textarea:focus{outline:none;border-color:var(--aqua);background:#fff;box-shadow:0 0 0 4px rgba(34,211,176,.2)}
 .loc{display:flex;gap:10px;align-items:center;background:#eef2f1;border-radius:12px;padding:12px;font-weight:600;color:var(--mute)}
@@ -65,6 +65,7 @@ button{font:inherit;font-weight:800;border:0;border-radius:14px;padding:16px 18p
 button:active{transform:translateY(3px);box-shadow:0 1px 0 #d9a514}
 button:disabled{background:#cfdcd9;color:#7d9490;box-shadow:none;cursor:not-allowed}
 button.alt{background:var(--deep);color:#fff;box-shadow:none}
+.err:empty{display:none}
 .err{color:var(--bad);font-weight:700;margin:8px 0 0;text-align:center}
 .gate{position:fixed;inset:0;background:var(--deep);color:#fff;z-index:9;display:none;padding:28px 22px;overflow:auto}
 .gate.show{display:block}.gate div{max-width:440px;margin:8vh auto 0}
@@ -92,7 +93,20 @@ button.alt{background:var(--deep);color:#fff;box-shadow:none}
     <button id="installAppBtn" type="button">&#128242; Install App to Home Screen</button>
     <ol id="instSteps"></ol>
   </div>
-  <div id="formWrap">
+  <div id="phoneWrap">
+    <section class="step"><b class="n"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v3h20v-3c0-3.3-6.7-5-10-5z"/></svg></b>
+      <h2><label for="uname">ENTER YOUR NAME</label></h2>
+      <input id="uname" type="text" autocomplete="name" placeholder="e.g. Ramesh Patil">
+    </section>
+    <section class="step"><b class="n"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z"/></svg></b>
+      <h2><label for="phone">ENTER YOUR PHONE NO</label></h2>
+      <input id="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="e.g. 9876543210">
+      <p class="err" id="phErr" style="text-align:left"></p>
+    </section>
+    <button id="phGo" type="button" disabled>START</button>
+  </div>
+  <div id="formWrap" style="display:none">
+    <p style="margin:0 4px 12px;font-weight:700"><span id="phShow"></span> <a href="#" id="phChange" style="color:var(--deep)">Change</a></p>
     <div class="prog"><div class="t"><i id="bar"></i></div><small id="cnt">0 of 3 done</small></div>
 
     <section class="step"><b class="n">1</b>
@@ -173,7 +187,20 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbylKxOf2kxyhqDDA0IQ3
 /* ======================================================================= */
 
 const $ = id => document.getElementById(id);
-const state = {loc:null, before:null, after:null};
+const state = {name:"",phone:"",loc:null, before:null, after:null};
+
+/* ---------- Phone number first ---------- */
+function phoneOk(v){ const d=v.replace(/\D/g,""); return d.length>=10 && d.length<=15; }
+function idOk(){ return !!$("uname").value.trim() && phoneOk($("phone").value); }
+function showForm(n,p){ $("phoneWrap").style.display="none"; $("formWrap").style.display="block"; $("phShow").textContent=n+" · "+p; state.name=n; state.phone=p; check(); window.scrollTo(0,0); }
+$("phone").addEventListener("input",()=>{ $("phone").value=$("phone").value.replace(/[^\d+ ]/g,""); });
+["uname","phone"].forEach(i=>$(i).addEventListener("input",()=>{ $("phGo").disabled=!idOk(); $("phErr").textContent=""; }));
+$("phGo").onclick=()=>{ const n=$("uname").value.trim(), p=$("phone").value.trim();
+  if(!n){ $("phErr").textContent="Enter your name."; return; }
+  if(!phoneOk(p)){ $("phErr").textContent="Enter a valid phone number (10 digits or more)."; return; }
+  try{localStorage.setItem("dtr_name",n);localStorage.setItem("dtr_phone",p)}catch(e){} showForm(n,p); };
+$("phChange").onclick=e=>{ e.preventDefault(); $("formWrap").style.display="none"; $("phoneWrap").style.display="block"; $("uname").value=state.name||""; $("phone").value=state.phone||""; $("phGo").disabled=!idOk(); };
+try{ const sn=localStorage.getItem("dtr_name"), sp=localStorage.getItem("dtr_phone"); if(sn && sp && phoneOk(sp)){ $("uname").value=sn; $("phone").value=sp; $("phGo").disabled=false; showForm(sn,sp); } }catch(e){}
 
 /* ---------- Optional location ---------- */
 $("gpsBtn").onclick = ()=>{
@@ -235,7 +262,7 @@ $("send").onclick = async ()=>{
   const btn = $("send"); btn.disabled = true; btn.textContent = "Sending…";
   try{
     const r = await fetch(SCRIPT_URL, {method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"},
-      body: JSON.stringify({dtr:$("dtr").value.trim(), remarks:$("rem").value.trim(), loc:state.loc||{lat:"",lng:"",acc:""},
+      body: JSON.stringify({name:state.name, phone:state.phone, dtr:$("dtr").value.trim(), remarks:$("rem").value.trim(), loc:state.loc||{lat:"",lng:"",acc:""},
                             before:state.before, after:state.after})});
     const j = await r.json();
     if(!j.ok) throw new Error(j.error||"Server error");

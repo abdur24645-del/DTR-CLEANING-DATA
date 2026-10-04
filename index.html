@@ -64,6 +64,9 @@ input:focus,textarea:focus{outline:none;border-color:var(--aqua);background:#fff
 .who strong{display:block;color:var(--ink);font-weight:800;font-size:1.05rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .who span{color:var(--mute);font-weight:600;font-size:.95rem}
 .who a{background:var(--deep);color:var(--aqua);font-weight:800;text-decoration:none;padding:9px 16px;border-radius:999px;flex:none}
+.tag{margin:26px 0 0;padding-top:18px;border-top:2px dashed var(--line);text-align:center;font-style:italic;font-weight:800;font-size:1.2rem;line-height:1.5;color:var(--deep)}
+.tag i{display:block;font-style:normal;color:#e0a800;font-size:1rem;margin-bottom:4px}
+.tag em{color:#0c8f78;font-style:italic;font-weight:900}
 .bar{position:fixed;left:0;right:0;bottom:0;padding:12px 14px calc(12px + env(safe-area-inset-bottom,0px));background:rgba(238,245,243,.92);backdrop-filter:blur(8px);border-top:1px solid var(--line);z-index:5}
 .bar>*{max-width:492px;margin:0 auto}
 button{font:inherit;font-weight:800;border:0;border-radius:14px;padding:16px 18px;background:var(--sun);color:#3a2a00;width:100%;cursor:pointer;box-shadow:0 4px 0 #d9a514;font-size:1.05rem}
@@ -156,6 +159,7 @@ button.alt{background:var(--deep);color:#fff;box-shadow:none}
     <h2>Report sent</h2>
     <p>Thank you. Your DTR report was saved.</p>
     <button class="alt" type="button" onclick="location.reload()">Submit another report</button>
+    <p class="tag"><i>&#10022; &#10022; &#10022;</i>Clean DTR, no fear.<br><em>Clean FEEDER, sleep sounder.</em></p>
   </div>
 </div>
 

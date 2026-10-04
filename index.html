@@ -158,7 +158,7 @@ button.alt{background:var(--deep);color:#fff;box-shadow:none}
     <div class="tick">&#10003;</div>
     <h2>Report sent</h2>
     <p>Thank you. Your DTR report was saved.</p>
-    <button class="alt" type="button" onclick="location.reload()">Submit another report</button>
+    <button class="alt" type="button" onclick="try{sessionStorage.setItem('dtr_again','1')}catch(e){};location.reload()">Submit another report</button>
     <p class="tag"><i>&#10022; &#10022; &#10022;</i>Clean DTR, no fear.<br><em>Clean FEEDER, sleep sounder.</em></p>
   </div>
 </div>
@@ -214,7 +214,11 @@ $("phGo").onclick=()=>{ const n=$("uname").value.trim(), p=$("phone").value.trim
   if(!phoneOk(p)){ $("phErr").textContent="Enter a valid phone number (10 digits or more)."; return; }
   try{localStorage.setItem("dtr_name",n);localStorage.setItem("dtr_phone",p)}catch(e){} showForm(n,p); };
 $("phChange").onclick=e=>{ e.preventDefault(); $("formWrap").style.display="none"; $("phoneWrap").style.display="block"; $("heroSub").textContent="Complete the steps, then start."; $("uname").value=state.name||""; $("phone").value=state.phone||""; $("phGo").disabled=!idOk(); };
-try{ const sn=localStorage.getItem("dtr_name"), sp=localStorage.getItem("dtr_phone"); if(sn && sp && phoneOk(sp)){ $("uname").value=sn; $("phone").value=sp; $("phGo").disabled=false; showForm(sn,sp); } }catch(e){}
+try{ const sn=localStorage.getItem("dtr_name"), sp=localStorage.getItem("dtr_phone"); if(sn && sp && phoneOk(sp)){
+    $("uname").value=sn; $("phone").value=sp; $("phGo").disabled=false;
+    let again=false; try{ again=sessionStorage.getItem("dtr_again")==="1"; sessionStorage.removeItem("dtr_again"); }catch(e){}
+    if(!again) showForm(sn,sp);   // after "Submit another report" stay on the first page; just press START
+  } }catch(e){}
 
 /* ---------- Optional location ---------- */
 $("gpsBtn").onclick = ()=>{

@@ -193,7 +193,7 @@ if (/iphone|ipad|ipod/i.test(navigator.userAgent)) {
 </script>
 <script>
 /* ====== SET THIS after deploying the Apps Script (see setup steps) ====== */
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzeEISNUXG0xM2mbAGYWZwu-TFoeYl2Ftlyyzxfu-w/dev";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx1durMLaJfHLnpy_0yGa_9E-yVu1C-H10FnxZ57s_zAgK7bshXt2-ieBu0nX7rZF0h/exec";
 /* ======================================================================= */
 
 const $ = id => document.getElementById(id);
@@ -274,11 +274,14 @@ $("send").onclick = async ()=>{
     const r = await fetch(SCRIPT_URL, {method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"},
       body: JSON.stringify({name:state.name, phone:state.phone, dtr:$("dtr").value.trim(), remarks:$("rem").value.trim(), loc:state.loc||{lat:"",lng:"",acc:""},
                             before:state.before, after:state.after})});
-    const j = await r.json();
+    const txt = await r.text(); let j;
+    try{ j = JSON.parse(txt); }catch(x){ throw new Error("The script did not reply correctly. In Apps Script set Who has access = Anyone, redeploy, and use the /exec URL"); }
     if(!j.ok) throw new Error(j.error||"Server error");
     $("formWrap").style.display="none"; $("done").style.display="block"; $("heroSub").textContent="Completed. Thanks for your good work.";
   }catch(e){
-    $("err").textContent = "Not sent: "+e.message+". Check your signal and try again.";
+    const net = (e instanceof TypeError);
+    $("err").textContent = net ? "Cannot reach the script. Check your signal, and that SCRIPT_URL in index.html is your /exec URL and access is set to Anyone."
+                               : "Not sent: "+e.message;
     btn.disabled = false;
   }
   btn.textContent = "Submit report";

@@ -276,7 +276,7 @@ $("send").onclick = async ()=>{
                             before:state.before, after:state.after})});
     const j = await r.json();
     if(!j.ok) throw new Error(j.error||"Server error");
-    $("formWrap").style.display="none"; $("done").style.display="block";
+    $("formWrap").style.display="none"; $("done").style.display="block"; $("heroSub").textContent="Completed. Thanks for your good work.";
   }catch(e){
     $("err").textContent = "Not sent: "+e.message+". Check your signal and try again.";
     btn.disabled = false;
